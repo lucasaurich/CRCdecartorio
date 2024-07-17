@@ -21,8 +21,8 @@ def process_text(text):
     pattern3 = re.search(r"(Código da comunicação:\s*\d+)", text, re.MULTILINE)
     codigo_comunicacao = pattern3.group(1).strip() if pattern3 else ""
 
-    # Pattern 4: Everything after Pattern 3 until the word "OBSERVAÇÕES"
-    pattern4 = re.search(r"Código da comunicação:\s*\d+\n+(.*?)(?=\nOBSERVAÇÕES:)", text, re.DOTALL)
+    # Pattern 4: Everything after Pattern 3 until the word "OBSERVAÇÕES", excluding initial "Aos" if present
+    pattern4 = re.search(r"Código da comunicação:\s*\d+\n+(?:Aos\s+)?(.+?)(?=\nOBSERVAÇÕES:)", text, re.DOTALL)
     text_until_observacoes = pattern4.group(1).strip() if pattern4 else ""
 
     # Get today's date in the desired format
