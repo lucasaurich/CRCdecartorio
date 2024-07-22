@@ -25,21 +25,36 @@ def process_text(text):
     pattern4 = re.search(r"Código da comunicação:\s*\d+\n+(?:Aos\s+)?(.+?)(?=\nOBSERVAÇÕES:)", text, re.DOTALL)
     text_until_observacoes = pattern4.group(1).strip() if pattern4 else ""
 
+    # Additional Pattern: Extract details for the parenthesis
+    additional_pattern = re.search(r"no livro ([A-Z]) número ([A-Z0-9]+),\s*às folhas (\d+),\s*sob número (\d+)", text, re.DOTALL | re.IGNORECASE)
+    if additional_pattern:
+        lv_letter = additional_pattern.group(1).strip()
+        numero = additional_pattern.group(2).strip()
+        folhas_number = additional_pattern.group(3).strip()
+        termo_number = additional_pattern.group(4).strip()
+        additional_pattern_text = f"Lv{lv_letter} N{numero} Fl{folhas_number} T{termo_number}"
+    else:
+        additional_pattern_text = ""
+
     # Get today's date in the desired format
     todays_date = datetime.today().strftime("%d/%m/%Y")
 
     # Generate "Texto para o Livro"
     texto_para_o_livro = (f"ANOTAÇÃO: Conforme {first_line} recebida via CRC pelo Cartório de {pattern2_text}, "
                           f"{codigo_comunicacao}, fomos informados que no dia {text_until_observacoes}. "
-                          f"O referido é verdade e dou fé. Cariacica-ES, {todays_date}. Eu, _____________ – Escrevente")
+                          f"O referido é verdade e dou fé. Cariacica-ES, {todays_date}. Eu, _____________ – Escrevente"
+                          f" ({additional_pattern_text})")
 
     # Generate "Texto para Certidão"
     texto_para_certidao = (f"ANOTAÇÃO: As margens do termo consta que conforme {first_line} recebida via CRC pelo Cartório de "
                            f"{pattern2_text}, {codigo_comunicacao} fomos informados que no dia {text_until_observacoes}. "
                            f"O referido é verdade e dou fé. Cariacica-ES, {todays_date}. Eu, (ass) – Escrevente.")
 
-    return texto_para_o_livro, texto_para_certidao
+    # Remove blank lines from the output texts
+    texto_para_o_livro = "\n".join([line for line in texto_para_o_livro.split("\n") if line.strip() != ""])
+    texto_para_certidao = "\n".join([line for line in texto_para_certidao.split("\n") if line.strip() != ""])
 
+    return texto_para_o_livro, texto_para_certidao
 def main():
     st.title("Processador de Comunicação de Casamento Civil")
 
@@ -60,3 +75,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
