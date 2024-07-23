@@ -50,11 +50,16 @@ def process_text(text):
                            f"{pattern2_text}, {codigo_comunicacao} fomos informados que no dia {text_until_observacoes}. "
                            f"O referido é verdade e dou fé. Cariacica-ES, {todays_date}. Eu, (ass) – Escrevente.")
 
+    # Remove spaces before and after periods
+    texto_para_o_livro = re.sub(r'\s*\.\s*', '.', texto_para_o_livro)
+    texto_para_certidao = re.sub(r'\s*\.\s*', '.', texto_para_certidao)
+
     # Remove blank lines from the output texts
     texto_para_o_livro = "\n".join([line for line in texto_para_o_livro.split("\n") if line.strip() != ""])
     texto_para_certidao = "\n".join([line for line in texto_para_certidao.split("\n") if line.strip() != ""])
 
     return texto_para_o_livro, texto_para_certidao
+
 def main():
     st.title("Processador de Comunicação de Casamento Civil")
 
@@ -75,4 +80,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
